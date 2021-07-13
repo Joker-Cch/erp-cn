@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>ResourceGroup.py</title>
+  <link rel="stylesheet" href="..\pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>ResourceGroup.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>资源组管理<br />
+* 资源定义<br />
+   * groupid: 组id<br />
+   * company: 客户id<br />
+   * createauthorid： 创建者id<br />
+   * groupname： 组名<br />
+   * envname： 环境名<br />
+   * region： 区域<br />
+   * serviceType： 服务类型<br />
+   * resource： 资源<br />
+   * createdate： 创建时间  </p>
+<p>资源组数据管理</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mongoengine</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">uuid4</span>
+<span class="kn">from</span> <span class="nn">models.Company</span> <span class="kn">import</span> <span class="n">Company</span>
+<span class="kn">from</span> <span class="nn">models.User</span> <span class="kn">import</span> <span class="n">User</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <h2><span id="资源组定义" href="资源组定义">资源组定义</span></h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">ResourceGroup</span><span class="p">(</span><span class="n">DynamicDocument</span><span class="p">):</span>
+    <span class="n">groupid</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">companyid</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">createauthorid</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">groupname</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">envname</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">region</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">serviceType</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">resource</span>  <span class="o">=</span> <span class="n">ListField</span><span class="p">(</span><span class="n">StringField</span><span class="p">(),</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">createdate</span> <span class="o">=</span> <span class="n">DateTimeField</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <h3><span id="资源组详情" href="资源组详情"> 资源组详情 </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;groupid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">groupid</span><span class="p">,</span>
+            <span class="s2">&quot;companyid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">companyid</span><span class="p">,</span>
+            <span class="s2">&quot;createauthorid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">createauthorid</span><span class="p">,</span>
+            <span class="s2">&quot;groupname&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">groupname</span><span class="p">,</span>
+            <span class="s2">&quot;envname&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">envname</span><span class="p">,</span>
+            <span class="s2">&quot;region&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">region</span><span class="p">,</span>
+            <span class="s2">&quot;serviceType&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">serviceType</span><span class="p">,</span>
+            <span class="s2">&quot;resource&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource</span><span class="p">,</span>
+            <span class="s2">&quot;createdate&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">createdate</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+        <span class="p">}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <h3><span id="资源简略信息" href="资源简略信息"> 资源简略信息 </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">sampleinfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;groupid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">groupid</span><span class="p">,</span>
+            <span class="s2">&quot;companyid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">companyid</span><span class="p">,</span>
+            <span class="s2">&quot;createauthorid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">createauthorid</span><span class="p">,</span>
+            <span class="s2">&quot;groupname&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">groupname</span><span class="p">,</span>
+            <span class="s2">&quot;envname&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">envname</span><span class="p">,</span>
+            <span class="s2">&quot;region&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">region</span><span class="p">,</span>
+            <span class="s2">&quot;serviceType&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">serviceType</span><span class="p">,</span>
+            <span class="s2">&quot;createdate&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">createdate</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+        <span class="p">}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <h2><span id="资源组数据层" href="资源组数据层">资源组数据层</span></h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">ResourceGroupControl</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <h3><span id="初始化" href="初始化"> 初始化</span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>初始化用户映射和客户映射</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">usermap</span> <span class="o">=</span>  <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">companymap</span> <span class="o">=</span> <span class="p">{}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <h3><span id="获取资源组详情" href="获取资源组详情">获取资源组详情</span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">getRG</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groupid</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>groupid: 资源组id</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">rg</span> <span class="o">=</span> <span class="n">ResourceGroup</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">groupid</span><span class="o">=</span> <span class="n">groupid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">rg</span><span class="p">:</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="n">rg</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+            <span class="n">info</span><span class="p">[</span><span class="s2">&quot;companyname&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">companyid</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">companyid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">companyname</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">info</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <h3><span id="资源组列表" href="资源组列表"> 资源组列表 </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">getRGlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">page</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">pagesize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">sortkey</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">companyid</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p>page: 页码<br />
+pagesize: 行数 <br />
+sortkey: &ldquo;+|-&ldquo;+key: 排序key<br />
+query： 查询条件，模糊查询组名环境名    <br />
+compamyid: 客户id 查询相关客户的资源组</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">if</span> <span class="n">query</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">Q</span><span class="p">(</span><span class="n">groupname__icontains</span><span class="o">=</span><span class="n">query</span><span class="p">)</span><span class="o">|</span><span class="n">Q</span><span class="p">(</span><span class="n">envname__icontains</span><span class="o">=</span><span class="n">query</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">companyid</span><span class="p">:</span> <span class="n">qwuery</span><span class="o">=</span><span class="n">query</span><span class="o">|</span><span class="n">Q</span><span class="p">(</span><span class="n">companyid</span> <span class="o">=</span> <span class="n">companyid</span><span class="p">)</span>
+            <span class="n">rg</span> <span class="o">=</span> <span class="n">ResourceGroup</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">companyid</span><span class="p">:</span> <span class="n">rg</span> <span class="o">=</span> <span class="n">ResourceGroup</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">companyid</span><span class="o">=</span><span class="n">companyid</span><span class="p">)</span>
+            <span class="n">rg</span> <span class="o">=</span> <span class="n">ResourceGroup</span><span class="o">.</span><span class="n">objects</span><span class="p">()</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="n">rg</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        <span class="n">rg</span> <span class="o">=</span> <span class="n">rg</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">sortkey</span> <span class="k">if</span> <span class="n">sortkey</span> <span class="k">else</span> <span class="s2">&quot;createdate&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">skip</span><span class="p">((</span><span class="n">page</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">pagesize</span><span class="p">)</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="n">pagesize</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">rg</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;createdate&quot;</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <p>查询创建者名称</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">usermap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">createauthorid</span><span class="p">):</span>
+                <span class="n">username</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">usermap</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">createauthorid</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">username</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">userid</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">createauthorid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">username</span> 
+                <span class="bp">self</span><span class="o">.</span><span class="n">usermap</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">createauthorid</span><span class="p">]</span> <span class="o">=</span> <span class="n">username</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <p>查询客户名</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">companymap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">companyid</span><span class="p">):</span>
+                <span class="n">companyname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">companymap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">companyid</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">companyname</span> <span class="o">=</span> <span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">companyid</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">companyid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">companyname</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">companymap</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">companyid</span><span class="p">]</span> <span class="o">=</span> <span class="n">companyname</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">sampleinfo</span><span class="p">()</span>
+            <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;username&quot;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">username</span>
+            <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;companyname&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">companyname</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <h3><span id="添加资源组" href="添加资源组">添加资源组</span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">addRG</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">companyid</span><span class="p">,</span><span class="n">createauthorid</span><span class="p">,</span><span class="n">groupname</span><span class="p">,</span><span class="n">envname</span><span class="p">,</span><span class="n">region</span><span class="p">,</span><span class="n">serviceType</span><span class="p">,</span><span class="n">resource</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <p>companyid 客户id
+createauthorid： 创建者id
+groupname: 组名
+envname： 环境名称
+region： 区域
+serviceType： 服务类型
+resource： 资源列表</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">data</span> <span class="o">=</span> <span class="n">ResourceGroup</span><span class="p">(</span><span class="n">groupid</span><span class="o">=</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">,</span><span class="n">companyid</span><span class="o">=</span><span class="n">companyid</span><span class="p">,</span><span class="n">createauthorid</span><span class="o">=</span><span class="n">createauthorid</span><span class="p">,</span> \
+            <span class="n">groupname</span><span class="o">=</span><span class="n">groupname</span><span class="p">,</span><span class="n">envname</span><span class="o">=</span> <span class="n">envname</span><span class="p">,</span><span class="n">region</span><span class="o">=</span> <span class="n">region</span><span class="p">,</span><span class="n">serviceType</span> <span class="o">=</span> <span class="n">serviceType</span><span class="p">,</span><span class="n">resource</span><span class="o">=</span><span class="n">resource</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      <h3><span id="更新资源组" href="更新资源组">更新资源组</span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">updateRG</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groupid</span><span class="p">,</span> <span class="n">groupname</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">envname</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">resource</span><span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <p>groupid： 资源组id
+groupname: 资源组名
+envname： 环境名
+resource： 资源列表</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">updatedata</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">groupname</span><span class="p">:</span> <span class="n">updatedata</span><span class="p">[</span><span class="s2">&quot;groupname&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">groupname</span>
+        <span class="k">if</span> <span class="n">envname</span><span class="p">:</span> <span class="n">updatedata</span><span class="p">[</span><span class="s2">&quot;envname&quot;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">envname</span>
+        <span class="k">if</span> <span class="n">resource</span><span class="p">:</span> <span class="n">updatedata</span><span class="p">[</span><span class="s2">&quot;resource&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">resource</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">updatedata</span><span class="p">:</span> <span class="k">return</span> <span class="mi">1</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">rg</span> <span class="o">=</span> <span class="n">ResourceGroup</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">groupid</span> <span class="o">=</span> <span class="n">groupid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">rg</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">2</span>
+            <span class="n">rg</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">updatedata</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mi">3</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      <h3><span id="删除资源组" href="删除资源组">删除资源组</span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">deleteRG</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      <p>资源组列表</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">group</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+                <span class="n">ResourceGroup</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">groupid</span> <span class="o">=</span> <span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

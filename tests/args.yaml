@@ -1,0 +1,31 @@
+args:
+  awsservice:
+    CompanyId: 93d82ecd73344e2e958fa0398a37c7d4
+    ServiceType: "EC2"
+    Region: cn-northwest-1
+    Cording:
+      Name: Lab
+  rgadd:
+    groupname: test2
+    envname: test2
+    companyid: "3cefbed4a2dc4a34a86a28b9dfaf7928"
+    region: ap-southeast-1
+    serviceType: EC2
+    resource:
+      - "i-dfasfdfdf"
+      - "i-fdfeffdsaffed"
+  rglist:
+    pagesize: 50
+    page: 1
+    sort: "groupname"
+    order: "asc"
+    query: "test2"
+    companyid: "3cefbed4a2dc4a34a86a28b9dfaf7928"
+  rgupdate:
+    groupid: fb6169dc2f9b42a6b462120f8ac0b334
+    groupname: "博思猫咪2"
+    envname: "dfkejofenworhewifjewf"
+    resource: []
+  rgdelete: 
+    group: 
+      - "6ad6dbe8426f41fb8a04c445c74d6e4e"

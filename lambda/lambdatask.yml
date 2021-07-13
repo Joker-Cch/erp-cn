@@ -1,0 +1,73 @@
+AWSTemplateFormatVersion: 2010-09-09
+Metadata: {}
+Parameters:
+  BositoolUrl:
+    Type: String
+    Default: ''
+    Description: Bositool App Url
+  BositoolToken:
+    Type: String
+    Default: ''
+    Description: Bositool App Token
+  TaskPath:
+    Type: String
+    Default: /tasks
+    Description: Bositool App task's path
+  TaskCallBack:
+    Type: String
+    Default: /callback
+    Description: Bositool App taskcallback's path
+Resources:
+  LAMBDATASK:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Code:
+        S3Bucket: bositool
+        S3Key: lambda/BosiCase.zip
+      Description: Bositool Case process
+      Role: "arn:aws:iam::917958955567:role/bositool"
+      Environment:
+        Variables:
+          APIURL:
+            Ref: BositoolUrl
+          APITOKEN:
+            Ref: BositoolToken
+          TASKPATH:
+            Ref: TaskPath
+          TASKCALLBACK:
+            Ref: TaskCallBack
+      FunctionName: BosiCase
+      Handler: main.handler
+      MemorySize: 512
+      Runtime: python3.7
+      Timeout: 900
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: d8edb01a-18a2-4ed5-a5f3-aeb8c524ec80
+  LAMBDATASKCRON:
+    Type: 'AWS::Events::Rule'
+    Properties:
+      Description: Bosi Case crontab
+      Name: BosiCaseCrontab
+      ScheduleExpression: rate(15 minutes)
+      State: ENABLED
+      Targets:
+        - Arn: !GetAtt LAMBDATASK.Arn
+          Id: Bositool_Case_Crontab
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 3e8cdba3-912d-4a6c-9535-48aa2537ea40
+    DependsOn:
+      - LAMBDATASK
+  LAMBDATASKPERMISSION:
+    Type: 'AWS::Lambda::Permission'
+    Properties: 
+        Action: 'lambda:InvokeFunction'
+        FunctionName: !GetAtt LAMBDATASK.Arn
+        Principal: "events.amazonaws.com"
+        SourceArn: !GetAtt LAMBDATASKCRON.Arn
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 086524e7-0612-4c3f-bab5-594a5a1a1591
+    DependsOn:
+      - LAMBDATASKCRON
