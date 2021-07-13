@@ -2,6 +2,7 @@ FROM tiangolo/uwsgi-nginx-flask:python3.7
 ENV MONGO_HOST=mongo
 ENV REDIS_HOST=redis
 ADD start.sh /uwsgi-nginx-entrypoint.sh
+ADD test
 RUN chmod +x /uwsgi-nginx-entrypoint.sh
 ADD requirement.txt /
 ENV TIME_ZONE=Asia/Shanghai 

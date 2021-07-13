@@ -2,10 +2,6 @@ import os
 from random import randint
 class Config:
     DEBUG = False
-    TESTING = False
-    MONGODB_HOST = os.getenv('MONGO_HOST', 'localhost')
-    MONGODB_USERNAME = "bositool"
-    MONGODB_PASSWORD = "bosicloud888"
     MONGODB_PORT = 27017
     MONGODB_DB = "bositool"
     MONGODB_CONNECT = False
